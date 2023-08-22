@@ -1,27 +1,27 @@
-const { User } = require('../models');
+const { friend } = require('../models');
 
-const UserController =  {
+const friendController =  {
     //get all the users
-    getAllUsers(req, res) {
-        User.find({})
+    getAllFriends(req, res) {
+        friend.find({})
             .then(userData => res.json(userData))
             .catch(err => res.status(500).json(err))
     },
     //get a single user by id
-    getUserById(req, res) {
-        User.findById(req.params.userId)
+    getFriendById(req, res) {
+        friend.findById(req.params.userId)
             .then(userData => res.json(userData))
             .catch(err => res.status(500).json(err));
     },
     //create a user
-    createUser(req, res) {
-        User.create(req.body)
+    createFriend(req, res) {
+        friend.create(req.body)
             .then(userData => res.json(userData))
             .catch(err => res.status(500).json(err));
     },
     //update user by id
-     updateUserById(req, res) {
-        User.findOneAndUpdate(
+     updateFriendById(req, res) {
+        friend.findOneAndUpdate(
             {_id: req.params.userId},
             req.body,
             { new: true }
@@ -35,8 +35,8 @@ const UserController =  {
             .catch(err => res.status(500).json(err));
     },
     //delete user by id
-    deleteUserById(req, res) {
-        User.findOneAndDelete({_id: req.params.userId})
+    deleteFriendById(req, res) {
+        friend.findOneAndDelete({_id: req.params.userId})
             .then(userData => {
                 if (!userData) {
                     return res.status(404).json({ message: 'User not found' });
@@ -47,7 +47,7 @@ const UserController =  {
     },
     //add friend
     addFriend(req, res) {
-        User.findOneAndUpdate(
+        friend.findOneAndUpdate(
             { _id: req.params.userId },
             { $addToSet: { friends: req.body.friendId || req.params.friendId} },
             { new: true }
@@ -62,26 +62,26 @@ const UserController =  {
     },
     //remove a friend
     removeFriend({ params }, res) {
-        User.findOneAndUpdate(
+        friend.findOneAndUpdate(
             { _id: params.userId },
             { $pull: { friends: params.friendId } },
             { new: true },
         )
-            .then((dbUserData) => {
-                if(!dbUserData) {
+            .then((dbFriendData) => {
+                if(!dbFriendData) {
                     return res.status(404).json({ message: "No user with this id!" });
                 }
                 //making sure the friend if removed
                 const kicked = !dbUserData.friends.includes(params.friendId);
                 
                 if(kicked) {
-                    res.json({ message: "User removed from Your friend list", dbUserData });
+                    res.json({ message: "User removed from Your friend list", dbFriendData });
                 } else {
-                    res.json(dbUserData);
+                    res.json(dbFriendData);
                 }
             })
             .catch((err) => res.status(400).json(err));
     }
 }
 
-module.exports = UserController
+module.exports = friendController

@@ -1,4 +1,4 @@
-const { Thought, User, Reaction } = require('../models');
+const { Thought, Friend, Reaction } = require('../models');
 const {Types} = require('mongoose');
 
 const ThoughtController = {
